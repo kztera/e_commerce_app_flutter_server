@@ -1,31 +1,35 @@
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const express = require('express');
 const morgan = require('morgan');
-const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv/config');
 
 const app = express();
-const env = process.env
-const hostname = env.HOST;
-const port = env.PORT;
-
-const authRouter = require('./routes/auth');
-const productsRouter = require('./routes/products');
-app.use('/auth', authRouter);
-app.use('/products', productsRouter);
+const env = process.env;
+const API = env.API_URL;
 
 app.use(bodyParser.json());
 app.use(morgan('tiny'));
 app.use(cors());
 app.options('*', cors());
 
-mongoose.connect(env.MONGO_URI).then(() => {
-  console.log('Database connected');
-}).catch(err => {
-  console.log('Error: ', err);
-})
+const authRouter = require('./routes/auth');
+
+app.use(`${API}/auth`, authRouter);
+
+const hostname = env.HOST;
+const port = env.PORT;
+
+mongoose
+  .connect(env.MONGO_URI)
+  .then(() => {
+    console.log('Connected to Database');
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 
 app.listen(port, hostname, () => {
-  console.log(`Server is running at http://${hostname}:${port}`);
+  console.log(`Server running at http://${hostname}:${port}`);
 });
