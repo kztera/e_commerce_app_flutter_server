@@ -21,6 +21,12 @@ app.use(errorHandler);
 const authRouter = require('./routes/auth');
 
 app.use(`${API}`, authRouter);
+app.get(`${API}/products`, (req, res) => {
+  return res.json({
+    name: 'Product 1',
+    price: 100,
+  });
+});
 
 const hostname = env.HOST;
 const port = env.PORT;
