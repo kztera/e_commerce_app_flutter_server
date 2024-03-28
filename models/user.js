@@ -39,4 +39,4 @@ const userSchema = Schema({
 
 userSchema.index({ email: 1 }, { unique: true });
 
-exports.UserModel = model('User', userSchema);
+exports.User = model('User', userSchema);
