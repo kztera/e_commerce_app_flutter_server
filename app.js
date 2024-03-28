@@ -2,6 +2,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const express = require('express');
 const morgan = require('morgan');
+const authJwt = require('./middlewares/jwt');
+const errorHandler = require('./middlewares/error_handler');
 const mongoose = require('mongoose');
 require('dotenv/config');
 
@@ -13,10 +15,12 @@ app.use(bodyParser.json());
 app.use(morgan('tiny'));
 app.use(cors());
 app.options('*', cors());
+app.use(authJwt());
+app.use(errorHandler);
 
 const authRouter = require('./routes/auth');
 
-app.use(`${API}/auth`, authRouter);
+app.use(`${API}`, authRouter);
 
 const hostname = env.HOST;
 const port = env.PORT;
