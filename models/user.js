@@ -10,10 +10,6 @@ const userSchema = Schema({
     }
   },
   passwordHash: { type: String, required: true },
-  street: String,
-  apartment: String,
-  city: String,
-  zip: String,
   country: String,
   isAdmin: { type: Boolean, default: false },
   phone: {
@@ -29,7 +25,6 @@ const userSchema = Schema({
   wishlist: [
     {
       productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
-      quantity: { type: Number, default: 1 },
       productName: { type: String, required: true },
       productImage: { type: String, required: true },
       productPrice: { type: Number, required: true },
@@ -38,5 +33,8 @@ const userSchema = Schema({
 });
 
 userSchema.index({ email: 1 }, { unique: true });
+
+userSchema.set('toObject', { virtuals: true });
+userSchema.set('toJSON', { virtuals: true });
 
 exports.User = model('User', userSchema);
