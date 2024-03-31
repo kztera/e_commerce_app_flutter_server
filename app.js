@@ -24,13 +24,13 @@ app.use(errorHandler);
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/users');
 const adminRouter = require('./routes/admin');
-const categoiesRouter = require('./routes/categories');
+const categoriesRouter = require('./routes/categories');
 const productsRouter = require('./routes/products');
 
 app.use(`${API}`, authRouter);
 app.use(`${API}/users`, userRouter);
 app.use(`${API}/admin`, adminRouter);
-app.use(`${API}/categories`, categoiesRouter);
+app.use(`${API}/categories`, categoriesRouter);
 app.use(`${API}/products`, productsRouter);
 app.use('/public', express.static(__dirname + '/public'));
 
