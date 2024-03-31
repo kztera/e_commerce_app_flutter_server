@@ -19,14 +19,13 @@ app.use(authJwt());
 app.use(errorHandler);
 
 const authRouter = require('./routes/auth');
+const userRouter = require('./routes/users');
+const adminRouter = require('./routes/admin');
 
 app.use(`${API}`, authRouter);
-app.get(`${API}/products`, (req, res) => {
-  return res.json({
-    name: 'Product 1',
-    price: 100,
-  });
-});
+app.use(`${API}/users`, userRouter);
+app.use(`${API}/admin`, adminRouter);
+app.use('/public', express.static(__dirname + '/public'));
 
 const hostname = env.HOST;
 const port = env.PORT;
