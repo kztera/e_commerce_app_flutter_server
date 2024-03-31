@@ -12,9 +12,10 @@ const productSchema = Schema({
   images: [{ type: String }],
   reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
   numberOfReviews: { type: Number, default: 0 },
-  sizes: [{ type: String }],
   category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
   dateAdded: { type: Date, default: Date.now },
+  source: { type: String, required: true },
+  numOfDownloads: { type: Number, default: 0 },
 });
 
 // pre-save hook
