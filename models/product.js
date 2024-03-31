@@ -16,6 +16,7 @@ const productSchema = Schema({
   dateAdded: { type: Date, default: Date.now },
   source: { type: String, required: true },
   numOfDownloads: { type: Number, default: 0 },
+  numOfLikes: { type: Number, default: 0 },
 });
 
 // pre-save hook
