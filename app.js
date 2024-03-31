@@ -30,6 +30,8 @@ app.use('/public', express.static(__dirname + '/public'));
 const hostname = env.HOST;
 const port = env.PORT;
 
+require('./helpers/cron_job');
+
 mongoose
   .connect(env.MONGO_URI)
   .then(() => {
