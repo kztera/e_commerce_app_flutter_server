@@ -34,8 +34,7 @@ app.use(`${API}/categories`, categoriesRouter);
 app.use(`${API}/products`, productsRouter);
 app.use('/public', express.static(__dirname + '/public'));
 
-const hostname = env.HOST;
-const port = env.PORT;
+const port = env.PORT || 3333;
 
 require('./helpers/cron_job');
 
@@ -48,6 +47,6 @@ mongoose
     console.error(error);
   });
 
-app.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}`);
+app.listen(port, () => {
+  console.log(`Server running at ${port}`);
 });
