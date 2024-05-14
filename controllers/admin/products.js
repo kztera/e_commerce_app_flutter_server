@@ -90,6 +90,12 @@ exports.addProduct = async function (req, res) {
         .json({ message: 'The product could not be created' });
     }
 
+    for (const categoryId of categories) {
+      const category = await Category.findById(categoryId);
+      category.products.push(product._id);
+      await category.save();
+    }
+
     for (const authorId of authors) {
       const author = await Author.findById(authorId);
       author.products.push(product._id);
