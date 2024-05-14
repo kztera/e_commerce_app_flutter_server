@@ -12,4 +12,5 @@ const authorSchema = Schema({
 
 authorSchema.set('toObject', { virtuals: true });
 authorSchema.set('toJSON', { virtuals: true });
-  
+
+exports.Author = model('Author', authorSchema);

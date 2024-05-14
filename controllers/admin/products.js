@@ -1,9 +1,11 @@
-const { Product } = require('../../models/product');
-const { Review } = require('../../models/review');
 const media_helper = require('../../helpers/media_helper');
 const util = require('util');
-const { Category } = require('../../models/category');
 const multer = require('multer');
+
+const { Product } = require('../../models/product');
+const { Review } = require('../../models/review');
+const { Category } = require('../../models/category');
+const { Author } = require('../../models/author');
 const { default: mongoose } = require('mongoose');
 
 exports.getProductsCount = async function (req, res) {
@@ -40,16 +42,29 @@ exports.addProduct = async function (req, res) {
       });
     }
 
-    const category = await Category.findById(req.body.category);
-    if (!category) {
-      return res.status(404).json({ message: 'Invalid Category.' });
+    // categories là mảng các id của các category
+    const categories = req.body.categories;
+    if (!Array.isArray(categories)) {
+      return res.status(400).json({ message: 'Invalid categories' });
     }
-    if (category.markedForDeletion) {
-      return res.status(404).json({
-        message:
-          'Category is disabled, you cannot add products to this category.',
-      });
+
+    for (const categoryId of categories) {
+      if (!mongoose.isValidObjectId(categoryId)) {
+        return res.status(400).json({ message: 'Invalid category' });
+      }
     }
+
+    const authors = req.body.authors;
+    if (!Array.isArray(authors)) {
+      return res.status(400).json({ message: 'Invalid authors' });
+    }
+
+    for (const authorId of authors) {
+      if (!mongoose.isValidObjectId(authorId)) {
+        return res.status(400).json({ message: 'Invalid author' });
+      }
+    }
+    
     const image = req.files['image'][0];
     if (!image) return res.status(404).json({ message: 'No file found!' });
 
@@ -66,13 +81,21 @@ exports.addProduct = async function (req, res) {
     if (imagePaths.length > 0) {
       req.body['images'] = imagePaths;
     }
-
+    
     const product = await new Product(req.body).save();
+
     if (!product) {
       return res
         .status(500)
         .json({ message: 'The product could not be created' });
     }
+
+    for (const authorId of authors) {
+      const author = await Author.findById(authorId);
+      author.products.push(product._id);
+      await author.save();
+    }
+
     return res.status(201).json(product);
   } catch (error) {
     console.error(error);
