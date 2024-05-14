@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use(morgan('tiny'));
 app.use(cors());
 app.options('*', cors());
-app.use(authJwt());
+app.use(authJwt().unless({ path: [/\/public\//] }));
 app.use(authorizePostRequests);
 app.use(errorHandler);
 
