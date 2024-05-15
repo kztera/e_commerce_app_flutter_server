@@ -23,6 +23,7 @@ exports.getProductsCount = async function (req, res) {
     return res.status(500).json({ type: error.name, message: error.message });
   }
 };
+
 exports.addProduct = async function (req, res) {
   try {
     const uploadImage = util.promisify(
@@ -111,6 +112,7 @@ exports.addProduct = async function (req, res) {
     return res.status(500).json({ type: error.name, message: error.message });
   }
 };
+
 exports.editProduct = async function (req, res) {
   try {
     if (
@@ -198,6 +200,7 @@ exports.editProduct = async function (req, res) {
     return res.status(500).json({ type: error.name, message: error.message });
   }
 };
+
 exports.deleteProductImages = async function (req, res) {
   try {
     const productId = req.params.id;
@@ -230,6 +233,7 @@ exports.deleteProductImages = async function (req, res) {
     return res.status(500).json({ message: error.message });
   }
 };
+
 exports.deleteProduct = async function (req, res) {
   try {
     const productId = req.params.id;
@@ -273,3 +277,13 @@ exports.getProducts = async function (req, res) {
     return res.status(500).json({ type: error.name, message: error.message });
   }
 };
+
+exports.deleteAllProducts = async function (_, res) {
+  try {
+    await Product.deleteMany({});
+    return res.status(204).end();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ type: error.name, message: error.message });
+  }
+}

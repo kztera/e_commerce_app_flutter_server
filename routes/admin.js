@@ -15,6 +15,7 @@ router.delete('/users/:id', usersController.deleteUser);
 router.post('/categories', categoriesController.addCategory);
 router.put('/categories/:id', categoriesController.editCategory);
 router.delete('/categories/:id', categoriesController.deleteCategory);
+router.delete('/allCategories', categoriesController.deleteAllCategories);
 
 // PRODUCTS
 router.get('/products/count', productsController.getProductsCount);
@@ -23,12 +24,14 @@ router.post('/products', productsController.addProduct);
 router.put('/products/:id', productsController.editProduct);
 router.delete('/products/:id/images', productsController.deleteProductImages);
 router.delete('/products/:id', productsController.deleteProduct);
+router.delete('/allProducts', productsController.deleteAllProducts);
 
 // ORDERS
 router.get('/orders', ordersController.getOrders);
 router.get('/orders/count', ordersController.getOrdersCount);
 router.put('/orders/:id', ordersController.changeOrderStatus);
 router.delete('/orders/:id', ordersController.deleteOrder);
+router.delete('/allOrders', ordersController.deleteAllOrders);
 
 // Authors
 router.get('/authors', authorsController.getAuthors);
@@ -36,5 +39,6 @@ router.post('/authors', authorsController.addAuthor);
 router.put('/authors/:id', authorsController.editAuthor);
 router.delete('/authors/:id', authorsController.deleteAuthor);
 router.delete('/authors/:id/images', authorsController.deleteAuthorImages);
+router.delete('/allAuthors', authorsController.deleteAllAuthors);
 
 module.exports = router;

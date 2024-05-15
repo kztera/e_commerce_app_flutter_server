@@ -111,3 +111,17 @@ exports.deleteAuthorImages = async function (req, res) {
     return res.status(500).json({ message: error.message });
   }
 }
+
+exports.deleteAllAuthors = async function (req, res) {
+  try {
+    const authors = await Author.find();
+    if (!authors) {
+      return res.status(404).json({ message: 'Authors not found' });
+    }
+    await Author.deleteMany();
+    return res.status(204).end();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ type: error.name, message: error.message });
+  }
+}

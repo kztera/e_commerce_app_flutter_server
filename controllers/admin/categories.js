@@ -68,3 +68,13 @@ exports.deleteCategory = async function (req, res) {
     return res.status(500).json({ type: error.name, message: error.message });
   }
 };
+
+exports.deleteAllCategories = async function (req, res) {
+  try {
+    await Category.deleteMany({});
+    return res.status(204).end();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ type: error.name, message: error.message });
+  }
+}
