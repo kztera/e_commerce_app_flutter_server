@@ -1,3 +1,4 @@
+const { Decimal128 } = require('mongodb');
 const { Schema, model } = require('mongoose');
 
 const productSchema = Schema({
@@ -7,7 +8,7 @@ const productSchema = Schema({
   ],
   description: { type: String, required: true },
   price: { type: Number, required: true },
-  rating: { type: Number, default: 0.0 },
+  rating: { type: Decimal128, default: 0.0 },
   image: { type: String, required: true },
   images: [{ type: String }],
   reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],

@@ -28,17 +28,17 @@ exports.getProducts = async function (req, res) {
           break;
       }
       products = await Product.find(query)
-        .select('-images -reviews -size')
+        .select('-images -reviews -source')
         .skip((page - 1) * pageSize)
         .limit(pageSize);
     } else if (req.query.category) {
-      products = await Product.find({ category: req.query.category })
-        .select('-images -reviews -size')
+      products = await Product.find({ categories: { $in: req.query.category } })
+        .select('-images -reviews -source')
         .skip((page - 1) * pageSize)
         .limit(pageSize);
     } else {
-      products = await Product.find();
-      select('-images -reviews -size')
+      products = await Product.find()
+        .select('-images -reviews -source')
         .skip((page - 1) * pageSize)
         .limit(pageSize);
     }
@@ -62,14 +62,14 @@ exports.searchProducts = async function (req, res) {
     let query = {};
     if (req.query.category) {
       query = { category: req.query.category };
-    } 
-    
+    }
+
     if (searchTerm) {
       query = {
         ...query,
         $text: {
           $search: searchTerm,
-          $language: 'vietnamese', 
+          $language: 'vietnamese',
           $caseSensitive: false
         },
       };
