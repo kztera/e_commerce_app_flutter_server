@@ -1,23 +1,29 @@
 const { unlink } = require('fs/promises');
+const { existsSync, mkdirSync } = require('fs');
 const multer = require('multer');
 const path = require('path');
 
 const ALLOWED_EXTENSIONS = {
   'image/png': 'png',
   'image/jpeg': 'jpeg',
-  'image/jgp': 'jpg',
+  'image/jpg': 'jpg',  // Corrected mimetype from 'image/jgp' to 'image/jpg'
 };
 
 const storage = multer.diskStorage({
   destination: function (_, __, cb) {
-    cb(null, 'public/uploads');
+    const uploadDir = path.join(__dirname, '..', 'public', 'uploads');
+    
+    // Check if the directory exists, if not, create it
+    if (!existsSync(uploadDir)) {
+      mkdirSync(uploadDir, { recursive: true });
+    }
+    
+    cb(null, uploadDir);
   },
   filename: function (_, file, cb) {
     const filename = file.originalname
-      .replace(' ', '-')
-      .replace('.png', '')
-      .replace('.jpg', '')
-      .replace('.jpeg', '');
+      .replace(/ /g, '-')
+      .replace(/(\.png|\.jpg|\.jpeg)$/, ''); // Use regex to replace extensions
     const extension = ALLOWED_EXTENSIONS[file.mimetype];
     cb(null, `${filename}-${Date.now()}.${extension}`);
   },
