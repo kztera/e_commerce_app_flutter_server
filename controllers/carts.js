@@ -50,9 +50,10 @@ exports.addToCart = async function (req, res) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    if (user.cart.length) {
-      const existingCartItem = user.cart.find((item) => item.equals(productId));
-      if (existingCartItem) {
+    const cartIds = user.cart.map((id) => id.toString());
+    for (const cartId of cartIds) {
+      const cart = await Cart.findById(cartId).session(session);
+      if (cart.product.toString() === productId) {
         await session.abortTransaction();
         return res.status(400).json({ message: 'Product already in cart' });
       }
@@ -91,44 +92,40 @@ exports.removeFromCart = async function (req, res) {
   const session = await mongoose.startSession();
   const userId = req.params.id;
   const productId = req.params.productId;
+  
   session.startTransaction();
   try {
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).session(session);
     if (!user) {
       await session.abortTransaction();
       return res.status(404).json({ message: 'User not found' });
     }
 
-    if (!user.cart.includes(productId)) {
-      await session.abortTransaction();
-      return res.status(400).json({ message: 'Product not in your cart' });
+    const cartIds = user.cart.map(id => id.toString());
+    for (const cartId of cartIds) {
+      const cartItem = await Cart.findById(cartId).session(session);
+      if (cartItem.product.toString() === productId) {
+        user.cart.pull(cartItem.id);
+        await user.save({ session });
+
+        const deletedCartItem = await Cart.findByIdAndDelete(cartItem.id).session(session);
+        if (!deletedCartItem) {
+          await session.abortTransaction();
+          return res.status(500).json({ message: 'Internal Server Error' });
+        }
+
+        await session.commitTransaction();
+        return res.status(204).end();
+      }
     }
 
-    const cartItemToRemove = await Cart.findById(
-      productId
-    );
-    if (!cartItemToRemove) {
-      await session.abortTransaction();
-      return res.status(404).json({ message: 'Cart Item not found' });
-    }
-
-    user.cart.pull(cartItemToRemove.id);
-    await user.save({ session });
-
-    const cart = await Cart.findByIdAndDelete(
-      cartItemToRemove.id
-    ).session(session);
-
-    if (!cart) {
-      return res.status(500).json({ message: 'Internal Server Error' });
-    }
-    await session.commitTransaction();
-    return res.status(204).end();
+    await session.abortTransaction();
+    return res.status(404).json({ message: 'Product not in your cart' });
   } catch (error) {
     console.error(error);
     await session.abortTransaction();
     return res.status(500).json({ type: error.name, message: error.message });
   } finally {
-    await session.endSession();
+    session.endSession();
   }
 };
