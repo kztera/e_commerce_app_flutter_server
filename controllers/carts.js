@@ -68,7 +68,7 @@ exports.addToCart = async function (req, res) {
     await user.save({ session });
 
     await session.commitTransaction();
-    return res.status(201).json(cartProduct);
+    return res.status(201).json(cart);
   } catch (error) {
     console.error(error);
     await session.abortTransaction();
