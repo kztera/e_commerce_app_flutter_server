@@ -17,6 +17,7 @@ exports.getUserWishlist = async function (req, res) {
         productImage: product.image,
         productPrice: product.price,
         productName: product.name,
+        productSaleOff: product.saleOff,
         productExists: product ? true : false,
       });
     }
@@ -59,6 +60,7 @@ exports.addToWishlist = async function (req, res) {
       productImage: product.image,
       productPrice: product.price,
       productName: product.name,
+      productSaleOff: product.saleOff,
     });
 
     await user.save();
