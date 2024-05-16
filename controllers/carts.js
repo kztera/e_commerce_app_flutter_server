@@ -49,7 +49,15 @@ exports.addToCart = async function (req, res) {
       await session.abortTransaction();
       return res.status(404).json({ message: 'Product not found' });
     }
-    
+
+    const existingCartItem = user.cart.find(
+      (item) => item.product.toString() === productId
+    );
+    if (existingCartItem) {
+      await session.abortTransaction();
+      return res.status(400).json({ message: 'Product already in cart' });
+    }
+
     const cart = await new Cart({
       product: productId,
       productName: product.name,
