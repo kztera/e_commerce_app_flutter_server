@@ -62,6 +62,7 @@ exports.addToCart = async function (req, res) {
       product: productId,
       productName: product.name,
       productImage: product.image,
+      productSaleOff: product.saleOff,
       productPrice: product.price,
     }).save({ session });
 

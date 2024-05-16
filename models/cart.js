@@ -5,6 +5,7 @@ const cartSchema = Schema({
   productName: { type: String, required: true },
   productImage: { type: String, required: true },
   productPrice: { type: Number, required: true },
+  productSaleOff: { type: Number, default: 0 },
 });
 
 cartSchema.set('toObject', { virtuals: true });
