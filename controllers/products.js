@@ -5,11 +5,11 @@ exports.getProducts = async function (req, res) {
     let products;
     const page = req.query.page || 1;
     const pageSize = 10;
+    let query = {};
 
     if (req.query.criteria) {
-      let query = {};
       if (req.query.category) {
-        query['category'] = req.query.category;
+        query['categories'] = { $in: req.query.category };
       }
       switch (req.query.criteria) {
         case 'newArrivals': {
@@ -27,21 +27,16 @@ exports.getProducts = async function (req, res) {
         default:
           break;
       }
-      products = await Product.find(query)
-        .select('-images -reviews -source')
-        .skip((page - 1) * pageSize)
-        .limit(pageSize);
     } else if (req.query.category) {
-      products = await Product.find({ categories: { $in: req.query.category } })
-        .select('-images -reviews -source')
-        .skip((page - 1) * pageSize)
-        .limit(pageSize);
-    } else {
-      products = await Product.find()
-        .select('-images -reviews -source')
-        .skip((page - 1) * pageSize)
-        .limit(pageSize);
+      query['categories'] = { $in: req.query.category };
     }
+
+    products = await Product.find(query)
+      .select('-images -reviews -source')
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .populate('author') 
+      .populate('category');
 
     if (!products) {
       return res.status(404).json({ message: 'Products not found' });

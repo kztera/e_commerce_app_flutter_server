@@ -23,6 +23,20 @@ const productSchema = Schema({
   numOfLikes: { type: Number, default: 0 },
 });
 
+productSchema.virtual('author', {
+  ref: 'Author',
+  localField: 'authors',
+  foreignField: '_id',
+  justOne: false,
+});
+
+productSchema.virtual('category', {
+  ref: 'Category',
+  localField: 'categories',
+  foreignField: '_id',
+  justOne: false,
+});
+
 // pre-save hook
 productSchema.pre('save', async function (next) {
   if (this.reviews.length > 0) {

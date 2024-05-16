@@ -5,9 +5,15 @@ const authorSchema = Schema({
   bio: { type: String, required: true },
   image: { type: String, required: true },
   products: [
-    {type: Schema.Types.ObjectId, ref: 'Product', required: true},
+    { type: Schema.Types.ObjectId, ref: 'Product', required: true },
   ],
+  productCount: { type: Number, default: 0 },
   isDisabled: { type: Boolean, default: false },
+});
+
+authorSchema.pre('save', async function (next) {
+  this.productCount = this.products.length;
+  next();
 });
 
 authorSchema.set('toObject', { virtuals: true });
