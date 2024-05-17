@@ -24,6 +24,9 @@ function authJwt() {
 
       `${API}/reset-password`,
       `${API}/reset-password/`,
+
+      `${API}/checkout`,
+      `${API}/checkout/`,
     ],
   });
 }

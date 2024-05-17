@@ -12,6 +12,7 @@ async function authorizePostRequests(req, res, next) {
     `${API}/forgot-password`,
     `${API}/verify-otp`,
     `${API}/reset-password`,
+    `${API}/checkout`,
   ];
 
   const isMatchingEndpoint = endpoints.some((endpoint) =>
