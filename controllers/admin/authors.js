@@ -4,7 +4,8 @@ const { Author } = require('../../models/author');
 
 exports.getAuthors = async function (req, res) {
   try {
-    const authors = await Author.find({ isDisabled: false });
+    const authors = await Author.find({ isDisabled: false })
+      .populate('product');
     return res.json(authors);
   } catch (error) {
     console.error(error);

@@ -3,7 +3,8 @@ const { Author } = require('../models/author');
 
 exports.getAuthors = async function (_, res) {
   try {
-    const authors = await Author.find();
+    const authors = await Author.find()
+      .populate('product');
     if (!authors) {
       return res.status(404).json({ message: 'Authors not found' });
     }

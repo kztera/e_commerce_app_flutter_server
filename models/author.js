@@ -11,6 +11,13 @@ const authorSchema = Schema({
   isDisabled: { type: Boolean, default: false },
 });
 
+authorSchema.virtual('product', {
+  ref: 'Product',
+  localField: 'products',
+  foreignField: '_id',
+  justOne: false,
+});
+
 authorSchema.pre('save', async function (next) {
   this.productCount = this.products.length;
   next();

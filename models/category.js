@@ -10,6 +10,13 @@ const categorySchema = Schema({
   isDisable: { type: Boolean, default: false },
 });
 
+categorySchema.virtual('product', {
+  ref: 'Product',
+  localField: 'products',
+  foreignField: '_id',
+  justOne: false,
+});
+
 categorySchema.set('toObject', { virtuals: true });
 categorySchema.set('toJSON', { virtuals: true });
 

@@ -8,8 +8,8 @@ const mailBuilder = require('../helpers/order_complete_email_builder');
 
 exports.checkout = async function (req, res) {
   console.log("🐧  req:", req.body);
-  const accessToken = req.header('Authorization').replace('Bearer', '').trim();
-  const tokenData = jwt.decode(accessToken);
+  // const accessToken = req.header('Authorization').replace('Bearer', '').trim();
+  // const tokenData = jwt.decode(accessToken);
   
   return res.status(204).json({ message: 'Checkout successful' });
 };

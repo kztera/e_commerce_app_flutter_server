@@ -35,7 +35,7 @@ exports.getProducts = async function (req, res) {
       .select('-images -reviews -source')
       .skip((page - 1) * pageSize)
       .limit(pageSize)
-      .populate('author') 
+      .populate('author')
       .populate('category');
 
     if (!products) {
@@ -70,6 +70,7 @@ exports.searchProducts = async function (req, res) {
       };
     }
     const searchResults = await Product.find(query)
+      .populate('author', 'category')
       .skip((page - 1) * pageSize)
       .limit(pageSize);
 
@@ -81,7 +82,10 @@ exports.searchProducts = async function (req, res) {
 };
 exports.getProductById = async function (req, res) {
   try {
-    const product = await Product.findById(req.params.id).select('-reviews');
+    const product = await Product.findById(req.params.id)
+      .select('-reviews')
+      .populate('author')
+      .populate('category');
     if (!product) {
       return res.status(404).json({ message: 'Product not found!' });
     }
