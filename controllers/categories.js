@@ -3,7 +3,15 @@ const { Category } = require('../models/category');
 
 exports.getCategories = async function (_, res) {
   try {
-    const categories = await Category.find().populate('product');
+    const categories = await Category.find()
+      .populate(
+        {
+          path: 'product',
+          populate: {
+            path: 'author',
+          }
+        }
+      );
     if (!categories) {
       return res.status(404).json({ message: 'Categories not found' });
     }
@@ -16,7 +24,15 @@ exports.getCategories = async function (_, res) {
 
 exports.getCategoryById = async function (req, res) {
   try {
-    const category = await Category.findById(req.params.id).populate('product');
+    const category = await Category.findById(req.params.id)
+      .populate(
+        {
+          path: 'product',
+          populate: {
+            path: 'author',
+          }
+        }
+      );
     if (!category) {
       return res.status(404).json({ message: 'Category not found' });
     }

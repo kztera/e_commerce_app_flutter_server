@@ -15,6 +15,10 @@ categorySchema.virtual('product', {
   localField: 'products',
   foreignField: '_id',
   justOne: false,
+  populate: {
+    path: 'author',
+    select: 'name',
+  },
 });
 
 categorySchema.set('toObject', { virtuals: true });
