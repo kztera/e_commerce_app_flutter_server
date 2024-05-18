@@ -115,7 +115,7 @@ exports.removeFromCart = async function (req, res) {
         }
 
         await session.commitTransaction();
-        return res.status(204).end();
+        return res.status(204).end({ message: 'Product removed from cart' });
       }
     }
 

@@ -40,7 +40,7 @@ exports.deleteUser = async function (req, res) {
 
     await User.deleteOne({ _id: userId });
 
-    return res.status(204).end();
+    return res.status(204).end({ message: 'User deleted' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });

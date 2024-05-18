@@ -93,7 +93,7 @@ exports.removeFromWishlist = async function (req, res) {
     user.wishlist.splice(index, 1);
 
     await user.save();
-    return res.status(204).end();
+    return res.status(204).end({ message: 'Product removed from wishlist' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });

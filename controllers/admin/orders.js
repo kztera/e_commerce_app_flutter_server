@@ -69,7 +69,7 @@ exports.deleteOrder = async function (req, res) {
     for (const orderItemId of order.orderItems) {
       await OrderItem.findByIdAndDelete(orderItemId);
     }
-    return res.status(204).end();
+    return res.status(204).end({ message: 'Order deleted' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });
@@ -80,7 +80,7 @@ exports.deleteAllOrders = async function (_, res) {
   try {
     await Order.deleteMany({});
     await OrderItem.deleteMany({});
-    return res.status(204).end();
+    return res.status(204).end({ message: 'All orders deleted' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });

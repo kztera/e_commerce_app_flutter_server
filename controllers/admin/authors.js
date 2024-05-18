@@ -73,7 +73,7 @@ exports.deleteAuthor = async function (req, res) {
     }
     author.isDisabled = true;
     await author.save();
-    return res.status(204).end();
+    return res.status(204).end({ message: 'Author deleted' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });
@@ -103,7 +103,7 @@ exports.deleteAuthorImages = async function (req, res) {
 
     await author.save();
 
-    return res.status(204).end();
+    return res.status(204).end({ message: 'Images deleted' });
   } catch (error) {
     console.error(`Error deleting author: ${error.message}`);
     if (error.code === 'ENOENT') {
@@ -120,7 +120,7 @@ exports.deleteAllAuthors = async function (req, res) {
       return res.status(404).json({ message: 'Authors not found' });
     }
     await Author.deleteMany();
-    return res.status(204).end();
+    return res.status(204).end({ message: 'Authors deleted' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });

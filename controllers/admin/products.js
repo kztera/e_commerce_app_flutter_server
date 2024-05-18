@@ -65,7 +65,7 @@ exports.addProduct = async function (req, res) {
         return res.status(400).json({ message: 'Invalid author' });
       }
     }
-    
+
     const image = req.files['image'][0];
     if (!image) return res.status(404).json({ message: 'No file found!' });
 
@@ -82,7 +82,7 @@ exports.addProduct = async function (req, res) {
     if (imagePaths.length > 0) {
       req.body['images'] = imagePaths;
     }
-    
+
     const product = await new Product(req.body).save();
 
     if (!product) {
@@ -224,7 +224,7 @@ exports.deleteProductImages = async function (req, res) {
 
     await product.save();
 
-    return res.status(204).end();
+    return res.status(204).end({ message: 'Images deleted' });
   } catch (error) {
     console.error(`Error deleting product: ${error.message}`);
     if (error.code === 'ENOENT') {
@@ -252,7 +252,7 @@ exports.deleteProduct = async function (req, res) {
     await Review.deleteMany({ _id: { $in: product.reviews } });
 
     await Product.findByIdAndDelete(productId);
-    return res.status(204).end();
+    return res.status(204).end({ message: 'Product deleted' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });
@@ -281,7 +281,7 @@ exports.getProducts = async function (req, res) {
 exports.deleteAllProducts = async function (_, res) {
   try {
     await Product.deleteMany({});
-    return res.status(204).end();
+    return res.status(204).end({ message: 'Products deleted' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });

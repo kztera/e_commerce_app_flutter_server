@@ -96,7 +96,7 @@ exports.removeReview = async function (req, res) {
     );
 
     await product.save();
-    return res.status(204).end();
+    return res.status(204).end({ message: 'Review removed' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });
