@@ -57,6 +57,14 @@ productSchema.pre('save', async function (next) {
 productSchema.index({ name: 'text', description: 'text' });
 
 productSchema.set('toObject', { virtuals: true });
-productSchema.set('toJSON', { virtuals: true });
+productSchema.set('toJSON', {
+  virtuals: true,
+  transform: (doc, ret) => {
+    if (ret.rating && ret.rating.toString) {
+      ret.rating = parseFloat(ret.rating.toString());
+    }
+    return ret;
+  }
+});
 
 exports.Product = model('Product', productSchema);
