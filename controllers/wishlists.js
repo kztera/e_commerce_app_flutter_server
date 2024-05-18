@@ -11,14 +11,16 @@ exports.getUserWishlist = async function (req, res) {
 
     const wishlist = [];
     for (const wishProduct of user.wishlist) {
-      const product = await Product.findById(wishProduct.productId);
+      const product = await Product.findById(wishProduct.productId)
+        .populate('author')
+
       wishlist.push({
         productId: product._id,
         productImage: product.image,
         productPrice: product.price,
         productName: product.name,
         productSaleOff: product.saleOff,
-        productExists: product ? true : false,
+        productAuthor: product.author
       });
     }
     return res.json(wishlist);
@@ -64,7 +66,7 @@ exports.addToWishlist = async function (req, res) {
     });
 
     await user.save();
-    return res.status(200).end();
+    return res.status(200).end({ message: 'Product added to wishlist' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });

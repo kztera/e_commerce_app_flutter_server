@@ -83,9 +83,11 @@ exports.searchProducts = async function (req, res) {
 exports.getProductById = async function (req, res) {
   try {
     const product = await Product.findById(req.params.id)
-      .select('-reviews')
       .populate('author')
       .populate('category');
+
+    // product.rating = product.rating.$numberDecimal;
+
     if (!product) {
       return res.status(404).json({ message: 'Product not found!' });
     }

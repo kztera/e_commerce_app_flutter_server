@@ -19,6 +19,15 @@ exports.leaveReview = async function (req, res) {
 
     let product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
+
+    // check if the user has already reviewed the product
+    const existingReview = product.reviews.find(
+      (reviewId) => reviewId.toString() === review.id
+    );
+    if (existingReview) {
+      return res.status(409).json({ message: 'You have already reviewed this product' });
+    }
+
     product.reviews.push(review.id);
     product = await product.save();
 
@@ -74,3 +83,22 @@ exports.getProductReviews = async function (req, res) {
     await session.endSession();
   }
 };
+
+exports.removeReview = async function (req, res) {
+  try {
+    await Review.findByIdAndDelete(req.params.reviewId);
+
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+
+    product.reviews = product.reviews.filter(
+      (reviewId) => reviewId.toString() !== req.params.reviewId
+    );
+
+    await product.save();
+    return res.status(204).end();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ type: error.name, message: error.message });
+  }
+}
