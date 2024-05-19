@@ -13,6 +13,19 @@ exports.getAuthors = async function (req, res) {
   }
 }
 
+exports.getAuthorById = async function (req, res) {
+  try {
+    const author = await Author.findById(req.params.id);
+    if (!author) {
+      return res.status(404).json({ message: 'Author not found!' });
+    }
+    return res.json(author);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ type: error.name, message: error.message });
+  }
+}
+
 exports.addAuthor = async function (req, res) {
   try {
     const uploadImage = util.promisify(

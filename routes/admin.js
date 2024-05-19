@@ -40,6 +40,7 @@ router.delete('/allOrders', ordersController.deleteAllOrders);
 
 // Authors
 router.get('/authors', authorsController.getAuthors);
+router.get('/authors/:id', authorsController.getAuthorById);
 router.post('/authors', authorsController.addAuthor);
 router.put('/authors/:id', authorsController.editAuthor);
 router.delete('/authors/:id', authorsController.deleteAuthor);
