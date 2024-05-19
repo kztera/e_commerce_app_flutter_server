@@ -86,7 +86,7 @@ exports.deleteCategory = async function (req, res) {
     }
     category.isDisabled = true;
     await category.save();
-    return res.status(204).end({ message: 'Category deleted' });
+    return res.status(200).json(category);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });
@@ -96,7 +96,7 @@ exports.deleteCategory = async function (req, res) {
 exports.deleteAllCategories = async function (req, res) {
   try {
     await Category.deleteMany({});
-    return res.status(204).end({ message: 'All categories deleted' });
+    return res.status(204).json({ message: 'All categories deleted' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });

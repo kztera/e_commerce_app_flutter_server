@@ -224,7 +224,7 @@ exports.deleteProductImages = async function (req, res) {
 
     await product.save();
 
-    return res.status(204).end({ message: 'Images deleted' });
+    return res.status(204).json({ message: 'Images deleted' });
   } catch (error) {
     console.error(`Error deleting product: ${error.message}`);
     if (error.code === 'ENOENT') {
@@ -252,7 +252,7 @@ exports.deleteProduct = async function (req, res) {
     await Review.deleteMany({ _id: { $in: product.reviews } });
 
     await Product.findByIdAndDelete(productId);
-    return res.status(204).end({ message: 'Product deleted' });
+    return res.status(204).json({ message: 'Product deleted' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });
@@ -281,7 +281,7 @@ exports.getProducts = async function (req, res) {
 exports.deleteAllProducts = async function (_, res) {
   try {
     await Product.deleteMany({});
-    return res.status(204).end({ message: 'Products deleted' });
+    return res.status(204).json({ message: 'Products deleted' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });

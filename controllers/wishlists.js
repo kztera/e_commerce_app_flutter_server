@@ -66,7 +66,7 @@ exports.addToWishlist = async function (req, res) {
     });
 
     await user.save();
-    return res.status(200).end({ message: 'Product added to wishlist' });
+    return res.status(200).json({ message: 'Product added to wishlist' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });
@@ -93,7 +93,7 @@ exports.removeFromWishlist = async function (req, res) {
     user.wishlist.splice(index, 1);
 
     await user.save();
-    return res.status(204).end({ message: 'Product removed from wishlist' });
+    return res.status(204).json({ message: 'Product removed from wishlist' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });
