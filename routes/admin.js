@@ -1,11 +1,15 @@
 const express = require('express');
 const router = express.Router();
 
+const dashboardController = require('../controllers/admin/dashboard');
 const usersController = require('../controllers/admin/users');
 const categoriesController = require('../controllers/admin/categories');
 const ordersController = require('../controllers/admin/orders');
 const productsController = require('../controllers/admin/products');
 const authorsController = require('../controllers/admin/authors');
+
+// DASHBOARD
+router.get('/dashboard', dashboardController.getDashboard);
 
 // USERS
 router.get('/users/:id', usersController.getUserById);
