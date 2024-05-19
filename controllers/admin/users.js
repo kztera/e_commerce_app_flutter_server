@@ -4,6 +4,18 @@ const { OrderItem } = require('../../models/order_item');
 const { Cart } = require('../../models/cart');
 const { Token } = require('../../models/token');
 
+exports.getUserById = async function (req, res) {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId).select('-password');
+    if (!user) return res.status(404).json({ message: 'User not found!' });
+    return res.json(user);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ type: error.name, message: error.message });
+  }
+}
+
 exports.getUserCount = async function (_, res) {
   try {
     const userCount = await User.countDocuments();

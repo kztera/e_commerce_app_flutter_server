@@ -22,6 +22,9 @@ function authJwt() {
       `${API}/verify-otp`,
       `${API}/verify-otp/`,
 
+      `${API}/verify-token`,
+      `${API}/verify-token/`,
+
       `${API}/reset-password`,
       `${API}/reset-password/`,
 

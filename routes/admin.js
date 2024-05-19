@@ -8,6 +8,7 @@ const productsController = require('../controllers/admin/products');
 const authorsController = require('../controllers/admin/authors');
 
 // USERS
+router.get('/users/:id', usersController.getUserById);
 router.get('/users/count', usersController.getUserCount);
 router.delete('/users/:id', usersController.deleteUser);
 

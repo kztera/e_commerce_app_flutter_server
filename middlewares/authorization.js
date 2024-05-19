@@ -11,6 +11,7 @@ async function authorizePostRequests(req, res, next) {
     `${API}/register`,
     `${API}/forgot-password`,
     `${API}/verify-otp`,
+    `${API}/verify-token`,
     `${API}/reset-password`,
     `${API}/checkout`,
   ];

@@ -85,9 +85,7 @@ exports.login = async function (req, res) {
 
 exports.verifyToken = async function (req, res) {
   try {
-    let accessToken = req.headers.authorization;
-    if (!accessToken) return res.json(false);
-    accessToken = accessToken.replace('Bearer', '').trim();
+    let accessToken = req.body.accessToken;
 
     const token = await Token.findOne({ accessToken });
     if (!token) return res.json(false);
