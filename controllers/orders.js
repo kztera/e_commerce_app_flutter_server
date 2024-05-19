@@ -34,7 +34,7 @@ exports.addOrder = async function (orderData) {
       }
 
       const product = await Product.findById(orderItem.product);
-      const cartProduct = await CartProduct.findById(orderItem.cartProductId);
+      const cart = await Cart.findById(orderItem.cartProductId);
       if (!cartProduct) {
         await session.abortTransaction();
         return console.trace(

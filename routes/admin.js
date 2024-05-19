@@ -33,6 +33,7 @@ router.delete('/allProducts', productsController.deleteAllProducts);
 
 // ORDERS
 router.get('/orders', ordersController.getOrders);
+router.get('/orders/:id', ordersController.getOrderById);
 router.get('/orders/count', ordersController.getOrdersCount);
 router.put('/orders/:id', ordersController.changeOrderStatus);
 router.delete('/orders/:id', ordersController.deleteOrder);

@@ -25,6 +25,30 @@ exports.getOrders = async function (_, res) {
   }
 };
 
+exports.getOrderById = async function (req, res) {
+  try {
+    const order = await Order.findById(req.params.id)
+      .populate('user', 'name email')
+      .populate({
+        path: 'orderItems',
+        populate: {
+          path: 'product',
+          populate: {
+            path: 'category',
+            select: 'name'
+          },
+        },
+      });
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    return res.json(order);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ type: error.name, message: error.message });
+  }
+}
+
 exports.getOrdersCount = async function (_, res) {
   try {
     const count = await Order.countDocuments();
