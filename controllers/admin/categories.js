@@ -38,16 +38,40 @@ exports.addCategory = async function (req, res) {
 
 exports.editCategory = async function (req, res) {
   try {
-    const { name, icon, colour } = req.body;
-    const category = await Category.findByIdAndUpdate(
-      req.params.id,
-      { name, icon, colour },
-      { new: true }
+    const uploadImage = util.promisify(
+      media_helper.upload.fields([{ name: 'image', maxCount: 1 }])
     );
+    try {
+      await uploadImage(req, res);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        type: error.code,
+        message: `${error.message}{${err.field}}`,
+        storageErrors: error.storageErrors,
+      });
+    }
+    
+    const image = req.files['image'][0];
+    if (image) {
+      req.body['image'] = `${req.protocol}://${req.get('host')}/${image.path}`;
+    }
+
+    const oldCategory = await Category.findById(req.params.id);
+    if (!oldCategory) {
+      return res.status(404).json({ message: 'Category not found!' });
+    }
+
+    const imageUrls = [oldCategory.image]
+    media_helper.deleteImages(imageUrls);
+
+    const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
     if (!category) {
       return res.status(404).json({ message: 'Category not found!' });
     }
-    return res.json(category);
+    return res.status(200).json(category);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ type: error.name, message: error.message });
