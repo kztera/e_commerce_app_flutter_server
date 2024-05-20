@@ -7,6 +7,7 @@ router.get('/', productsController.getProducts);
 router.get('/search', productsController.searchProducts);
 
 router.get('/:id', productsController.getProductById);
+router.get('/authors/:id', productsController.getProductsByAuthorId);
 router.post('/:id/reviews', reviewsController.leaveReview);
 router.get('/:id/reviews', reviewsController.getProductReviews);
 router.delete('/:id/reviews/:reviewId', reviewsController.removeReview);

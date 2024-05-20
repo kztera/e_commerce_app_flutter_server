@@ -97,3 +97,24 @@ exports.getProductById = async function (req, res) {
     return res.status(500).json({ type: error.name, message: error.message });
   }
 };
+// router.get('/authors/:id', productsController.getProductsByAuthorId);
+exports.getProductsByAuthorId = async function (req, res) {
+  try {
+    const page = req.query.page || 1;
+    const pageSize = 10;
+
+    const products = await Product.find({ author: req.params.id })
+      .populate('author')
+      .populate('category')
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+
+    if (!products) {
+      return res.status(404).json({ message: 'Products not found!' });
+    }
+    return res.json(products);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ type: error.name, message: error.message });
+  }
+};
