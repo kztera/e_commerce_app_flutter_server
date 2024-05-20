@@ -7,9 +7,6 @@ const mailBuilder = require('../helpers/order_complete_email_builder');
 
 exports.checkout = async function (req, res) {
   const { orderId, paymentData, message } = req.body;
-  if (message !== 'Successful') {
-    return res.status(400).json({ message });
-  }
 
   try {
     // Tìm order theo id
@@ -38,19 +35,19 @@ exports.checkout = async function (req, res) {
     user.cart = [];
     await user.save();
 
-    const leanOrder = order.toObject();
-    const orderItems = await OrderItem.find({ _id: { $in: order.orderItems } });
-    leanOrder["orderItems"] = orderItems
+    // const leanOrder = order.toObject();
+    // const orderItems = await OrderItem.find({ _id: { $in: order.orderItems } });
+    // leanOrder["orderItems"] = orderItems
 
-    await emailSender.sendMail(
-      user.email,
-      'Thông tin đơn hàng',
-      mailBuilder.buildEmail(
-        user.name,
-        leanOrder,
-        paymentData
-      )
-    );
+    // await emailSender.sendMail(
+    //   user.email,
+    //   'Thông tin đơn hàng',
+    //   mailBuilder.buildEmail(
+    //     user.name,
+    //     leanOrder,
+    //     paymentData
+    //   )
+    // );
 
     res.status(204).json({ message: 'Thanh toán thành công', order });
   } catch (err) {
