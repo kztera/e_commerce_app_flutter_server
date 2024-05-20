@@ -44,7 +44,7 @@ exports.getProductReviews = async function (req, res) {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id)
     if (!product) {
       await session.abortTransaction();
       return res.status(404).json({ message: 'Product not found' });
@@ -57,6 +57,25 @@ exports.getProductReviews = async function (req, res) {
       .sort({ date: -1 })
       .skip((page - 1) * pageSize)
       .limit(pageSize);
+
+    if (!reviews) {
+      await session.abortTransaction();
+      return res.status(404).json({ message: 'Reviews not found' });
+    }
+
+    const count = {
+      5: 0,
+      4: 0,
+      3: 0,
+      2: 0,
+      1: 0,
+    }
+
+    for (const review of reviews) {
+      count[review.rating] += 1;
+    }
+
+    const averageRating = reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
 
     const processedReviews = [];
 
@@ -74,7 +93,12 @@ exports.getProductReviews = async function (req, res) {
       processedReviews.push(newReview ?? review);
     }
     await session.commitTransaction();
-    return res.json(processedReviews);
+    const result = {
+      reviews: processedReviews,
+      averageRating,
+      count,
+    }
+    return res.json(result);
   } catch (error) {
     console.error(error);
     await session.abortTransaction();
