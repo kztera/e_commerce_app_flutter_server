@@ -28,6 +28,7 @@ const categoriesRouter = require('./routes/categories');
 const productsRouter = require('./routes/products');
 const authorsRouter = require('./routes/authors');
 const checkoutRouter = require('./routes/checkout');
+const ordersRouter = require('./routes/orders');
 
 app.use(`${API}`, authRouter);
 app.use(`${API}/users`, userRouter);
@@ -36,6 +37,7 @@ app.use(`${API}/categories`, categoriesRouter);
 app.use(`${API}/products`, productsRouter);
 app.use(`${API}/authors`, authorsRouter);
 app.use(`${API}/checkout`, checkoutRouter);
+app.use(`${API}/orders`, ordersRouter);
 app.use('/public', express.static(__dirname + '/public'));
 
 const port = env.PORT || 3333;

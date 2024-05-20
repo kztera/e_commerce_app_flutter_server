@@ -5,118 +5,58 @@ const { OrderItem } = require('../models/order_item');
 const { Order } = require('../models/order');
 const { User } = require('../models/user');
 
-exports.addOrder = async function (orderData) {
-  if (!mongoose.isValidObjectId(orderData.user)) {
-    return console.error('User Validation Failed: Invalid user!');
-  }
-
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
+exports.addOrder = async function (req, res) {
   try {
-    const user = await User.findById(orderData.user);
-    if (!user) {
-      await session.abortTransaction();
-      return console.trace('ORDER CREATION FAILED: User not found');
-    }
+    // Lấy danh sách sản phẩm từ req.body
+    const cartItems = req.body.cartItems;
 
-    const orderItems = orderData.orderItems;
-    const orderItemIds = [];
-    for (const orderItem of orderItems) {
-      if (
-        !mongoose.isValidObjectId(orderItem.product) ||
-        !(await Product.findById(orderItem.product))
-      ) {
-        await session.abortTransaction();
-        return console.trace(
-          'ORDER CREATION FAILED: Invalid product in the order'
-        );
-      }
+    // Tạo các mục đơn hàng từ danh sách sản phẩm
+    const orderItems = await Promise.all(
+      cartItems.map(async (cartItem) => {
+        const orderItem = new OrderItem({
+          product: cartItem.product,
+          productName: cartItem.productName,
+          productImage: cartItem.productImage,
+          productPrice: cartItem.productPrice,
+          productSaleOff: cartItem.productSaleOff,
+        });
+        await orderItem.save();
+        return orderItem._id;
+      })
+    );
 
-      const product = await Product.findById(orderItem.product);
-      const cart = await Cart.findById(orderItem.cartProductId);
-      if (!cartProduct) {
-        await session.abortTransaction();
-        return console.trace(
-          'ORDER CREATION FAILED: Invalid cart product in the order'
-        );
-      }
+    // Tính tổng giá trị đơn hàng
+    const totalPrice = cartItems.reduce(
+      (total, item) =>
+        total + item.productPrice * (1 - item.productSaleOff / 100),
+      0
+    );
 
-      let orderItemModel = await new OrderItem(orderItem).save({ session });
-      if (!orderItemModel) {
-        await session.abortTransaction();
-        console.trace(
-          'ORDER CREATION FAILED:',
-          `An order for product "${product.name}" could not be `
-        );
-      }
+    // Tạo đơn hàng mới
+    const order = new Order({
+      orderItems,
+      email: req.body.email,
+      totalPrice,
+      user: req.body.userId,
+    });
+    await order.save();
 
-      if (!cartProduct.reserved) {
-        product.countInStock -= orderItemModel.quantity;
-        await product.save({ session });
-      }
-
-      orderItemIds.push(orderItemModel._id);
-
-      await CartProduct.findByIdAndDelete(orderItem.cartProductId).session(
-        session
-      );
-      user.cart.pull(cartProduct.id);
-      await user.save({ session });
-    }
-
-    orderData['orderItems'] = orderItemIds;
-
-    let order = new Order(orderData);
-    order.status = 'processed';
-    order.statusHistory.push('processed');
-
-    order = await order.save({ session });
-
-    if (!order) {
-      await session.abortTransaction();
-      return console.trace(
-        'ORDER CREATION FAILED: The order could not be created.'
-      );
-    }
-
-    await session.commitTransaction();
-    return order;
-  } catch (error) {
-    await session.abortTransaction();
-    return console.trace(error);
-  } finally {
-    await session.endSession();
+    res.status(201).json({ order });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Lỗi khi tạo đơn hàng' });
   }
-};
+};  
 
 exports.getUserOrders = async function (req, res) {
   try {
-    const orders = await Order.find({ user: req.params.userId })
-      .select('orderItems status totalPrice dateOrdered')
-      .populate({ path: 'orderItems', select: 'productName, productImage' })
-      .sort({ dateOrdered: -1 });
+    const userId = req.params.userId;
+    const orders = await Order.find({ user: userId });
 
-    if (!orders) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-
-    const completed = [];
-    const active = [];
-    const cancelled = [];
-    for (const order of orders) {
-      if (order.status === 'delivered') {
-        completed.push(order);
-      } else if (['cancelled', 'expired'].includes(order.status)) {
-        cancelled.push(order);
-      } else {
-        active.push(order);
-      }
-    }
-    return res.json({ total: orders.length, active, completed, cancelled });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ type: error.name, message: error.message });
+    res.status(200).json(orders);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Lỗi khi lấy danh sách đơn hàng' });
   }
 };
 

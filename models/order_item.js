@@ -5,6 +5,7 @@ const orderItemSchema = Schema({
   productName: { type: String, required: true },
   productImage: { type: String, required: true },
   productPrice: { type: Number, required: true },
+  productSaleOff: { type: Number, default: 0 },
 });
 
 orderItemSchema.set('toObject', { virtuals: true });

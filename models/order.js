@@ -24,10 +24,17 @@ const orderSchema = Schema({
     required: true,
     default: ['pending'],
   },
-  totalPrice: Number,
+  totalPrice: { type: Number, required: true },
   user: { type: Schema.Types.ObjectId, ref: 'User' },
   dateOrdered: { type: Date, default: Date.now },
 });
+
+orderSchema.virtual('orderItem', {
+  ref: 'OrderItem',
+  localField: 'orderItems',
+  foreignField: '_id',
+  justOne: false,
+})
 
 orderSchema.set('toObject', { virtuals: true });
 orderSchema.set('toJSON', { virtuals: true });
