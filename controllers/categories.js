@@ -4,14 +4,14 @@ const { Category } = require('../models/category');
 exports.getCategories = async function (_, res) {
   try {
     const categories = await Category.find()
-      .populate(
-        {
-          path: 'product',
-          populate: {
-            path: 'author',
-          }
-        }
-      );
+      // .populate(
+      //   {
+      //     path: 'product',
+      //     populate: {
+      //       path: 'author',
+      //     }
+      //   }
+      // );
     if (!categories) {
       return res.status(404).json({ message: 'Categories not found' });
     }

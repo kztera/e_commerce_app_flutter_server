@@ -65,6 +65,9 @@ exports.addToWishlist = async function (req, res) {
       productSaleOff: product.saleOff,
     });
 
+    product.numOfLikes += 1;
+
+    await product.save();
     await user.save();
     return res.status(200).json({ message: 'Product added to wishlist' });
   } catch (error) {
@@ -92,6 +95,12 @@ exports.removeFromWishlist = async function (req, res) {
     }
     user.wishlist.splice(index, 1);
 
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    product.numOfLikes -= 1;
+    
     await user.save();
     return res.status(204).json({ message: 'Product removed from wishlist' });
   } catch (error) {

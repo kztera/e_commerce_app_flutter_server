@@ -84,7 +84,7 @@ exports.deleteCategory = async function (req, res) {
     if (!category) {
       return res.status(404).json({ message: 'Category not found!' });
     }
-    category.isDisabled = true;
+    category.isDisable = true;
     await category.save();
     return res.status(200).json(category);
   } catch (error) {
