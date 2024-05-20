@@ -1,4 +1,4 @@
-exports.buildEmail = (userName, order, shippingDetailsUsername) => {
+exports.buildEmail = (userName, order) => {
   const orderTemplates = [];
   for (const orderItem of order.orderItems) {
     orderTemplates.push(
@@ -6,9 +6,6 @@ exports.buildEmail = (userName, order, shippingDetailsUsername) => {
         orderItem.productImage,
         orderItem.productName,
         orderItem.productPrice,
-        orderItem.quantity,
-        orderItem.selectedColour,
-        orderItem.selectedSize
       )
     );
   }
@@ -294,9 +291,6 @@ exports.buildEmail = (userName, order, shippingDetailsUsername) => {
                        <tr>
                         <td align="left" style="padding:0;Margin:0;width:270px">
                          <table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-                           <tr>
-                            <td align="left" style="padding:0;Margin:0"><h3 style="Margin:0;line-height:29px;mso-line-height-rule:exactly;font-family:Raleway, Arial, sans-serif;font-size:24px;font-style:normal;font-weight:normal;color:#386641">Shipping</h3><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:tahoma, verdana, segoe, sans-serif;line-height:24px;color:#4D4D4D;font-size:16px">${shippingDetailsUsername}<br>${order.shippingAddress1},<br>${order.city}&nbsp;&nbsp;${order.postalCode}<br>${order.country}</p></td>
-                           </tr>
                          </table></td>
                        </tr>
                      </table><!--[if mso]></td></tr></table><![endif]--></td>
