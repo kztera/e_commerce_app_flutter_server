@@ -13,7 +13,7 @@ async function authorizePostRequests(req, res, next) {
     `${API}/verify-otp`,
     `${API}/verify-token`,
     `${API}/reset-password`,
-    `${API}/checkout`,
+    `${API}/checkout/momo`,
   ];
 
   const isMatchingEndpoint = endpoints.some((endpoint) =>
