@@ -7,7 +7,7 @@ const emailSender = require('../helpers/email_sender');
 const mailBuilder = require('../helpers/order_complete_email_builder');
 
 exports.checkout = async function (req, res) {
-  const { orderId, paymentData, resultCode } = req.body;
+  const { orderId, resultCode } = req.body;
 
   if (resultCode !== 0) {
     return res.status(400).json({ message: 'Thanh toán thất bại' });
@@ -23,7 +23,6 @@ exports.checkout = async function (req, res) {
     // Cập nhật trạng thái đơn hàng và thông tin thanh toán
     order.status = 'delivered';
     order.statusHistory.push('delivered');
-    order.paymentId = paymentData.transId;
     await order.save();
 
     // Xóa cart của người dùng
