@@ -1,4 +1,4 @@
-const { default: mongoose } = require('mongoose');
+const { default: mongoose, model } = require('mongoose');
 const { Product } = require('../models/product');
 const { Cart } = require('../models/cart');
 const { OrderItem } = require('../models/order_item');
@@ -46,12 +46,25 @@ exports.addOrder = async function (req, res) {
     console.error(err);
     res.status(500).json({ message: 'Lỗi khi tạo đơn hàng' });
   }
-};  
+};
 
 exports.getUserOrders = async function (req, res) {
   try {
     const userId = req.params.userId;
-    const orders = await Order.find({ user: userId });
+    const orders = await Order.find({ user: userId })
+      .populate({
+        path: 'orderItems',
+        populate: {
+          path: 'product',
+          model: 'Product',
+          populate: {
+            path: 'author',
+            model: 'Author',
+            select: 'name',
+          },
+        }
+      })
+      .sort({ dateOrdered: -1 });
 
     res.status(200).json(orders);
   } catch (err) {
@@ -62,7 +75,20 @@ exports.getUserOrders = async function (req, res) {
 
 exports.getOrderById = async function (req, res) {
   try {
-    const order = await Order.findById(req.params.id).populate('orderItems');
+    const order = await Order.findById(req.params.id)
+      .populate({
+        path: 'orderItems',
+        populate: {
+          path: 'product',
+          model: 'Product',
+          populate: {
+            path: 'author',
+            model: 'Author',
+            select: 'name',
+          },
+        }
+      })
+      .sort({ dateOrdered: -1 });
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
