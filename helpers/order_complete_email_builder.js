@@ -1023,7 +1023,7 @@ exports.buildEmail = (userName, orderItems, totalPrice) => {
                                             color: #333333;
                                           "
                                       >
-                                        Tổng tiền: 200000 VND
+                                        Tổng tiền: ${totalPrice} VND
                                       </h3>
                                     </td>
                                   </tr>
