@@ -3,6 +3,6 @@ const router = express.Router();
 
 const checkoutController = require('../controllers/checkout');
 
-router.post('/', checkoutController.checkout);
+router.post('/momo', checkoutController.checkout);
 
 module.exports = router;
