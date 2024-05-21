@@ -14,7 +14,7 @@ exports.sendMail = async (email, subject, body) => {
       from: process.env.EMAIL,
       to: email,
       subject: subject,
-      text: body,
+      html: body,
     };
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
