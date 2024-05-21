@@ -12,7 +12,7 @@ exports.getUserWishlist = async function (req, res) {
     const wishlist = [];
     for (const wishProduct of user.wishlist) {
       const product = await Product.findById(wishProduct.productId)
-        .populate('author', 'name')
+        .populate('author')
 
       wishlist.push({
         productId: product._id,
@@ -20,7 +20,7 @@ exports.getUserWishlist = async function (req, res) {
         productPrice: product.price,
         productName: product.name,
         productSaleOff: product.saleOff,
-        productAuthorName: product.author[0].name,
+        productAuthor: product.author
       });
     }
     return res.json(wishlist);
