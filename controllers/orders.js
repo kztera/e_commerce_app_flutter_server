@@ -9,34 +9,44 @@ exports.addOrder = async function (req, res) {
   try {
     // Lấy danh sách sản phẩm từ req.body
     const cartItems = req.body.cartItems;
+    const cartItemIds = cartItems.map((item) => item.product);
+
+    const products = await Product.find({ _id: { $in: cartItemIds } }).populate({
+      path: 'author',
+      model: 'Author',
+      select: 'name',
+    });
+    if (products.length !== cartItems.length) {
+      return res.status(400).json({ message: 'Sản phẩm không tồn tại' });
+    }
+
+    const productMap = {}
+    products.forEach(product => {
+      productMap[product.id] = product;
+    });
 
     // Tạo các mục đơn hàng từ danh sách sản phẩm
     const orderItems = await Promise.all(
       cartItems.map(async (cartItem) => {
+        const product = productMap[cartItem.product];
         const orderItem = new OrderItem({
-          product: cartItem.product,
-          productName: cartItem.productName,
-          productImage: cartItem.productImage,
-          productPrice: cartItem.productPrice,
-          productSaleOff: cartItem.productSaleOff,
+          product: product.id,
+          productAuthorName: product.author[0].name,
+          productName: product.name,
+          productImage: product.image,
+          productPrice: product.price,
+          productSaleOff: product.saleOff,
         });
         await orderItem.save();
         return orderItem._id;
       })
     );
 
-    // Tính tổng giá trị đơn hàng
-    const totalPrice = cartItems.reduce(
-      (total, item) =>
-        total + item.productPrice * (1 - item.productSaleOff / 100),
-      0
-    );
-
     // Tạo đơn hàng mới
     const order = new Order({
       orderItems,
       email: req.body.email,
-      totalPrice,
+      totalPrice: req.body.totalPrice,
       user: req.body.userId,
     });
     await order.save();
@@ -52,18 +62,7 @@ exports.getUserOrders = async function (req, res) {
   try {
     const userId = req.params.userId;
     const orders = await Order.find({ user: userId })
-      .populate({
-        path: 'orderItems',
-        populate: {
-          path: 'product',
-          model: 'Product',
-          populate: {
-            path: 'author',
-            model: 'Author',
-            select: 'name',
-          },
-        }
-      })
+      .populate({ path: 'orderItems' })
       .sort({ dateOrdered: -1 });
 
     res.status(200).json(orders);

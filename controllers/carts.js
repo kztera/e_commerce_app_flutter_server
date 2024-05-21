@@ -44,7 +44,9 @@ exports.addToCart = async function (req, res) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const product = await Product.findById(productId).session(session);
+    const product = await Product.findById(productId)
+      .populate('author', 'name')
+      .session(session)
     if (!product) {
       await session.abortTransaction();
       return res.status(404).json({ message: 'Product not found' });
@@ -61,6 +63,7 @@ exports.addToCart = async function (req, res) {
 
     const cart = await new Cart({
       product: productId,
+      productAuthorName: product.author[0].name,
       productName: product.name,
       productImage: product.image,
       productSaleOff: product.saleOff,
@@ -92,7 +95,7 @@ exports.removeFromCart = async function (req, res) {
   const session = await mongoose.startSession();
   const userId = req.params.id;
   const productId = req.params.productId;
-  
+
   session.startTransaction();
   try {
     const user = await User.findById(userId).session(session);
