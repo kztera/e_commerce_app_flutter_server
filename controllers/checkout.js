@@ -7,7 +7,7 @@ const emailSender = require('../helpers/email_sender');
 const mailBuilder = require('../helpers/order_complete_email_builder');
 
 exports.checkout = async function (req, res) {
-  const { orderId, resultCode, email } = req.body;
+  const { orderId, resultCode } = req.body;
 
   if (resultCode !== 0) {
     return res.status(400).json({ message: 'Thanh toán thất bại' });
@@ -49,7 +49,7 @@ exports.checkout = async function (req, res) {
     }
 
     await emailSender.sendMail(
-      email,
+      order.email,
       'Thông tin đơn hàng',
       mailBuilder.buildEmail(
         user.name,
