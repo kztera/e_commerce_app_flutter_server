@@ -8,10 +8,13 @@ exports.getDashboard = async function (_, res) {
   try {
     const totalRevenue = await Order.aggregate([
       {
-        $group: {
-          _id: null,
-          total: { $sum: '$totalPrice' },
-        },
+      $match: { status: 'delivered' }
+      },
+      {
+      $group: {
+        _id: null,
+        total: { $sum: '$totalPrice' },
+      },
       },
     ]);
     data.totalRevenue = {};
