@@ -17,6 +17,7 @@ exports.register = async function (req, res) {
   try {
     let user = new User({
       ...req.body,
+      dateCreated: Date.now(),
       passwordHash: bcrypt.hashSync(req.body.password, 8),
     });
 

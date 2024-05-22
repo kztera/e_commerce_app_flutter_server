@@ -24,6 +24,7 @@ const userSchema = Schema({
       productAuthorName: { type: String, required: true },
     },
   ],
+  dateCreated: { type: Date, default: Date.now },
 });
 
 userSchema.index({ email: 1 }, { unique: true });

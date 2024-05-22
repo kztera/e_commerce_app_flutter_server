@@ -1,25 +1,9 @@
 const { Order } = require('../../models/order');
 const { Product } = require('../../models/product');
 const { User } = require('../../models/user');
+const dayjs = require('dayjs');
 
 exports.getDashboard = async function (_, res) {
-  // totalRevenue: ,
-	// totalUser: ,
-	// totalOrder: ,
-	// totalProduct: ,
-	// overviewRevenue: [
-	// 	{
-	// 		name: "Tên tháng" // T1,
-	// 		total: "Tiền"
-	// 	}
-	// ],
-	// lastestOrder: [ // mảng chỉ 5 objects
-	// 	{
-	// 		name: 'Olivia Martin',
-	// 	    email: 'olivia.martin@email.com',
-	// 		orderPrice: 223000
-	// 	}
-	// ]
   const data = {};
   try {
     const totalRevenue = await Order.aggregate([
@@ -30,20 +14,51 @@ exports.getDashboard = async function (_, res) {
         },
       },
     ]);
+    data.totalRevenue = {};
     if (totalRevenue.length) {
-      data.totalRevenue = totalRevenue[0].total;
+      data.totalRevenue["amount"] = totalRevenue[0].total;
     } else {
-      data.totalRevenue = 0;
-    }    
+      data.totalRevenue["amount"] = 0
+    }
+
+    const allOrders = await Order.find();
+    const rangeDate = allOrders.map((order) => order.dateOrdered);
+    const minDate = new Date(Math.min.apply(null, rangeDate));
+    const maxDate = new Date(Math.max.apply(null, rangeDate));
+    data.totalRevenue["rangeDate"] = `${dayjs(minDate).format('DD/MM/YYYY')} - ${dayjs(maxDate).format('DD/MM/YYYY')}`
 
     const totalUser = await User.countDocuments();
-    data.totalUser = totalUser;
+    const totalUserAddedMonth = await User.countDocuments({
+      dateCreated: {
+        $gte: new Date(dayjs().startOf('month').toISOString()),
+        $lte: new Date(dayjs().endOf('month').toISOString()),
+      },
+    });
+    data.totalUser = {};
+    data.totalUser["amount"] = totalUser;
+    data.totalUser["createdMonth"] = totalUserAddedMonth;
 
     const totalOrder = await Order.countDocuments();
-    data.totalOrder = totalOrder;
+    const toltalTodayOrder = await Order.countDocuments({
+      dateOrdered: {
+        $gte: new Date(dayjs().startOf('day').toISOString()),
+        $lte: new Date(dayjs().endOf('day').toISOString()),
+      },
+    });
+    data.totalOrder = {};
+    data.totalOrder["amount"] = totalOrder;
+    data.totalOrder["today"] = toltalTodayOrder;
 
     const totalProduct = await Product.countDocuments();
-    data.totalProduct = totalProduct;
+    const totalProductAddedMonth = await Product.countDocuments({
+      dateAdded: {
+        $gte: new Date(dayjs().startOf('month').toISOString()),
+        $lte: new Date(dayjs().endOf('month').toISOString()),
+      },
+    });
+    data.totalProduct = {};
+    data.totalProduct["amount"] = totalProduct;
+    data.totalProduct["addedMonth"] = totalProductAddedMonth;
 
     const overviewRevenue = await Order.aggregate([
       {
@@ -63,20 +78,14 @@ exports.getDashboard = async function (_, res) {
         total: monthData ? monthData.total : 0,
       };
     });
-    // data.overviewRevenue = overviewRevenue.map((item) => {
-    //   return {
-    //     name: item._id,
-    //     total: item.total,
-    //   };
-    // });
 
-    const lastestOrder = await Order.find()
+    const latestOrder = await Order.find()
       .select('totalPrice')
       .populate('user', 'name email')
       .sort({ dateOrdered: -1 })
       .limit(5);
     
-    data.lastestOrder = lastestOrder.map((item) => {
+    data.lastestOrder = latestOrder.map((item) => {
       return {
         name: item.user.name,
         email: item.user.email,
