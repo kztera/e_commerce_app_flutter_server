@@ -62,10 +62,10 @@ exports.addAuthor = async function (req, res) {
 
 exports.editAuthor = async function (req, res) {
   try {
-    const { name, bio, products } = req.body;
+    const { name, bio } = req.body;
     const author = await Author.findByIdAndUpdate(
       req.params.id,
-      { name, bio, bio },
+      { name, bio },
       { new: true }
     );
     if (!author) {
