@@ -29,7 +29,9 @@ exports.addProduct = async function (req, res) {
     const uploadImage = util.promisify(
       media_helper.upload.fields([
         { name: 'image', maxCount: 1 },
-        { name: 'images', maxCount: 10 },
+        { name: 'image1', maxCount: 1 },
+        { name: 'image2', maxCount: 1 },
+        { name: 'image3', maxCount: 1 },
       ])
     );
     try {
@@ -45,6 +47,7 @@ exports.addProduct = async function (req, res) {
 
     // categories là mảng các id của các category
     const categories = req.body.categories;
+    console.log("categories:", categories);
     if (!Array.isArray(categories)) {
       return res.status(400).json({ message: 'Invalid categories' });
     }
@@ -67,22 +70,30 @@ exports.addProduct = async function (req, res) {
     }
 
     const image = req.files['image'][0];
-    if (!image) return res.status(404).json({ message: 'No file found!' });
+    const imagePaths = [];
 
+    if (!image) return res.status(404).json({ message: 'No file found!' });
     req.body['image'] = `${req.protocol}://${req.get('host')}/${image.path}`;
 
-    const gallery = req.files['images'];
-    const imagePaths = [];
-    if (gallery) {
-      for (const image of gallery) {
-        const imagePath = `${req.protocol}://${req.get('host')}/${image.path}`;
-        imagePaths.push(imagePath);
-      }
-    }
-    if (imagePaths.length > 0) {
-      req.body['images'] = imagePaths;
+    const image1 = req.files['image1'][0];
+    if (image1) {
+      const imagePath = `${req.protocol}://${req.get('host')}/${image1.path}`;
+      imagePaths.push(imagePath);
     }
 
+    const image2 = req.files['image2'][0];
+    if (image2) {
+      const imagePath = `${req.protocol}://${req.get('host')}/${image2.path}`;
+      imagePaths.push(imagePath);
+    }
+
+    const image3 = req.files['image3'][0];
+    if (image3) {
+      const imagePath = `${req.protocol}://${req.get('host')}/${image3.path}`;
+      imagePaths.push(imagePath);
+    }
+
+    req.body['images'] = imagePaths;
     const product = await new Product(req.body).save();
 
     if (!product) {
