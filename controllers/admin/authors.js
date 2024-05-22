@@ -138,3 +138,17 @@ exports.deleteAllAuthors = async function (req, res) {
     return res.status(500).json({ type: error.name, message: error.message });
   }
 }
+
+exports.getAuthorsSelect = async function (_, res) {
+  try {
+    const authors = await Author.find({ isDisabled: false });
+    const authorsSelect = authors.map((author) => ({
+      value: author._id,
+      label: author.name,
+    }));
+    return res.json(authorsSelect);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ type: error.name, message: error.message });
+  }
+}

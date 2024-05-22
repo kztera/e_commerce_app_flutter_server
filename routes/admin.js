@@ -48,4 +48,8 @@ router.delete('/authors/:id', authorsController.deleteAuthor);
 router.delete('/authors/:id/images', authorsController.deleteAuthorImages);
 router.delete('/allAuthors', authorsController.deleteAllAuthors);
 
+// Selects
+router.get('/select/categories', categoriesController.getCategoriesSelect);
+router.get('/select/authors', authorsController.getAuthorsSelect);
+
 module.exports = router;

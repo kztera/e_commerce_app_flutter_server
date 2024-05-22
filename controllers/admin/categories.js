@@ -102,3 +102,17 @@ exports.deleteAllCategories = async function (req, res) {
     return res.status(500).json({ type: error.name, message: error.message });
   }
 }
+
+exports.getCategoriesSelect = async function (_, res) {
+  try {
+    const categories = await Category.find({ isDisable: false });
+    const categoriesSelect = categories.map((category) => ({
+      value: category.id,
+      label: category.name,
+    }));
+    return res.json(categoriesSelect);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ type: error.name, message: error.message });
+  }
+}
