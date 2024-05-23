@@ -23,6 +23,7 @@ exports.getUserWishlist = async function (req, res) {
         productAuthor: product.author
       });
     }
+
     return res.json(wishlist);
   } catch (error) {
     console.error(error);
@@ -40,7 +41,10 @@ exports.addToWishlist = async function (req, res) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const product = await Product.findById(productId);
+    const product = await Product.findById(productId)
+      .populate('author');
+    console.log("product:", product);
+
     if (!product) {
       return res
         .status(404)
@@ -63,6 +67,7 @@ exports.addToWishlist = async function (req, res) {
       productPrice: product.price,
       productName: product.name,
       productSaleOff: product.saleOff,
+      productAuthorName: product.author[0].name,
     });
 
     product.numOfLikes += 1;
@@ -99,8 +104,10 @@ exports.removeFromWishlist = async function (req, res) {
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
+   
     product.numOfLikes -= 1;
-    
+
+    await product.save();
     await user.save();
     return res.status(204).json({ message: 'Product removed from wishlist' });
   } catch (error) {

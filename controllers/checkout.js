@@ -45,6 +45,10 @@ exports.checkout = async function (req, res) {
     // thêm link src của sách truyền vào orderItems
     for (let orderItem of orderItems) {
       const product = await Product.findById(orderItem.product);
+
+      product.numOfDownloads += 1;
+      await product.save()
+
       orderItem["productSource"] = product.source;
     }
 
