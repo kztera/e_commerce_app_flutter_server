@@ -34,6 +34,7 @@ exports.getProducts = async function (req, res) {
     products = await Product.find(query)
       .select('-images -reviews -source')
       .skip((page - 1) * pageSize)
+      .orderBy('dateAdded', 'desc')
       .limit(pageSize)
       .populate('author')
       .populate('category');
