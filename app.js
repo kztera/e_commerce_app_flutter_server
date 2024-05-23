@@ -13,14 +13,9 @@ const app = express();
 const env = process.env;
 const API = env.API_URL;
 
-const corsOptions = {
-  origin: 'https://web-admin-3z-bookstore.vercel.app',
-  optionsSuccessStatus: 200
-};
-
 app.use(bodyParser.json());
 app.use(morgan('tiny'));
-app.use(cors(corsOptions));
+app.use(cors());
 app.options('*', cors());
 app.use(authJwt().unless({ path: [/\/public\//] }));
 app.use(authorizePostRequests);
