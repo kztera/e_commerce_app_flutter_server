@@ -3,7 +3,8 @@ const { Category } = require('../models/category');
 
 exports.getCategories = async function (_, res) {
   try {
-    const categories = await Category.find()
+    let categories = await Category.find()
+      console.log("categories:", categories);
       // .populate(
       //   {
       //     path: 'product',
@@ -12,6 +13,14 @@ exports.getCategories = async function (_, res) {
       //     }
       //   }
       // );
+      categories = categories.map(category => {
+        const countProducts = category?.products?.length;
+        return {
+          ...category.toObject(),
+          countProducts,
+        };
+      });
+      
     if (!categories) {
       return res.status(404).json({ message: 'Categories not found' });
     }
