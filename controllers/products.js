@@ -103,11 +103,14 @@ exports.getProductById = async function (req, res) {
 };
 // router.get('/authors/:id', productsController.getProductsByAuthorId);
 exports.getProductsByAuthorId = async function (req, res) {
+  console.log("req:", req.params);
   try {
     const page = req.query.page || 1;
     const pageSize = 10;
 
-    const products = await Product.find({ author: req.params.id })
+    
+
+    const products = await Product.find({ authors: req.params.id })
       .populate('author')
       .populate('category')
       .skip((page - 1) * pageSize)
