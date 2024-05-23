@@ -34,10 +34,13 @@ exports.getProducts = async function (req, res) {
     products = await Product.find(query)
       .select('-images -reviews -source')
       .skip((page - 1) * pageSize)
-      .orderBy('dateAdded', 'desc')
+      .sort({ dateAdded: -1 })
       .limit(pageSize)
       .populate('author')
       .populate('category');
+
+    // xáo trộn các kết quả products
+    products = products.sort(() => Math.random() - 0.5);
 
     if (!products) {
       return res.status(404).json({ message: 'Products not found' });
