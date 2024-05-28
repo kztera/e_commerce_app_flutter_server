@@ -2,10 +2,16 @@ const { Order } = require('../../models/order');
 const { OrderItem } = require('../../models/order_item');
 exports.getOrders = async function (_, res) {
   try {
-    const orders = await Order.find()
+    let orders;
+    const page = req.query.page || 1;
+    const pageSize = 10;
+    
+    orders = await Order.find()
       .select('-statusHistory')
-      .populate('user', 'name email')
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
       .sort({ dateOrdered: -1 })
+      .populate('user', 'name email')
       .populate({
         path: 'orderItems',
         populate: {
