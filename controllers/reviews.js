@@ -10,6 +10,7 @@ exports.leaveReview = async function (req, res) {
 
     const review = await new Review({
       ...req.body,
+      product: req.params.id,
       userName: user.name,
     }).save();
 

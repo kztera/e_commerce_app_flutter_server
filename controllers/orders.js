@@ -1,9 +1,8 @@
 const { default: mongoose, model } = require('mongoose');
 const { Product } = require('../models/product');
-const { Cart } = require('../models/cart');
 const { OrderItem } = require('../models/order_item');
 const { Order } = require('../models/order');
-const { User } = require('../models/user');
+const { Review } = require('../models/review');
 
 exports.addOrder = async function (req, res) {
   try {
@@ -74,20 +73,29 @@ exports.getUserOrders = async function (req, res) {
 
 exports.getOrderById = async function (req, res) {
   try {
-    const order = await Order.findById(req.params.id)
+    let order = await Order.findById(req.params.id)
       .populate({
         path: 'orderItems',
-        populate: {
-          path: 'product',
-          model: 'Product',
-          populate: {
-            path: 'author',
-            model: 'Author',
-            select: 'name',
-          },
-        }
       })
       .sort({ dateOrdered: -1 });
+
+    const productIds = order.orderItems.map((item) => item.product._id);
+    const reviews = await Review.find({ product: { $in: productIds } });
+
+    let orderItems = order.orderItems
+    orderItems = orderItems.map((item) => {
+      reviews.forEach((review) => {
+        if (item.product._id.toString() === review.product.toString() && review.user.toString() === order.user.toString()) {
+          return item["hasReview"] = true;
+        }
+        item["hasReview"] = false;
+      });
+      return item;
+    });
+
+    // 2. Gán lại orderItems cho order
+    order.orderItems = orderItems;
+
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }

@@ -37,6 +37,13 @@ productSchema.virtual('category', {
   justOne: false,
 });
 
+productSchema.virtual('review', {
+  ref: 'Review',
+  localField: '_id',
+  foreignField: 'product',
+  justOne: false,
+});
+
 // pre-save hook
 productSchema.pre('save', async function (next) {
   if (this.reviews.length > 0) {
