@@ -20,7 +20,7 @@ exports.getUserWishlist = async function (req, res) {
         productPrice: product.price,
         productName: product.name,
         productSaleOff: product.saleOff,
-        productAuthor: product.author
+        productAuthorName: product.author[0].name
       });
     }
 
