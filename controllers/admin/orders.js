@@ -1,6 +1,6 @@
 const { Order } = require('../../models/order');
 const { OrderItem } = require('../../models/order_item');
-exports.getOrders = async function (_, res) {
+exports.getOrders = async function (req, res) {
   try {
     let orders;
     const page = req.query.page || 1;
