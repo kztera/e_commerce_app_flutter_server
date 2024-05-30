@@ -64,6 +64,25 @@ exports.getUserOrders = async function (req, res) {
       .populate({ path: 'orderItems' })
       .sort({ dateOrdered: -1 });
 
+    const productIds = orders.map((order) => order.orderItems.map((item) => item.product));
+    const reviews = await Review.find({ product: { $in: productIds } });
+
+    orders.forEach((order) => {
+      let orderItems = order.orderItems
+      orderItems = orderItems.map((item) => {
+        reviews.forEach((review) => {
+          if (item.product.toString() === review.product.toString() && review.user.toString() === order.user.toString()) {
+            return item["hasReview"] = true;
+          }
+          item["hasReview"] = false;
+        });
+        return item;
+      });
+
+      // 2. Gán lại orderItems cho order
+      order.orderItems = orderItems;
+    });
+
     res.status(200).json(orders);
   } catch (err) {
     console.error(err);
