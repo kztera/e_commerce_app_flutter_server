@@ -85,7 +85,7 @@ exports.getOrderById = async function (req, res) {
     let orderItems = order.orderItems
     orderItems = orderItems.map((item) => {
       reviews.forEach((review) => {
-        if (item.product._id.toString() === review.product.toString() && review.user.toString() === order.user.toString()) {
+        if (item.product.toString() === review.product.toString() && review.user.toString() === order.user.toString()) {
           return item["hasReview"] = true;
         }
         item["hasReview"] = false;
